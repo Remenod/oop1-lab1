@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="uk">
+
+<head>
+    <meta charset="UTF-8">
+    <title>TCircle & TSphere Playground</title>
+    <link rel="stylesheet" href="../style.css">
+</head>
+
+<body>
+    <h1>TCircle & TSphere Playground</h1>
+
+    <div class="section">
+        <h2>Конструктор</h2>
+        <label>Тип:
+            <select id="classType">
+                <option value="circle">TCircle</option>
+                <option value="sphere">TSphere</option>
+            </select>
+        </label>
+        <label>Ім’я: <input type="text" id="instName" placeholder="Назва"></label>
+        <label>Радіус: <input type="number" id="radius" value="5"></label>
+        <button onclick="createInstance()">Створити</button>
+        <br>
+        <br>
+        <div id="instances"></div>
+    </div>
+
+    <div class="section">
+        <h2>Бінарні операції</h2>
+        <div class="dropzone" data-slot="a">Слот A</div>
+        <select id="binaryOp">
+            <option value="add">+</option>
+            <option value="sub">-</option>
+            <option value="mul">*</option>
+            <option value="div">/</option>
+            <option value="eq">==</option>
+            <option value="neq">!=</option>
+            <option value="gt">&gt;</option>
+            <option value="lt">&lt;</option>
+            <option value="ge">&gt;=</option>
+            <option value="le">&lt;=</option>
+        </select>
+        <div class="dropzone" data-slot="b">Слот B</div>
+        <button onclick="doBinary()">Виконати</button>
+        <div id="binaryResult"></div>
+    </div>
+
+    <div class="section">
+        <h2>Унарні операції</h2>
+        <div class="dropzone" data-slot="u">Слот</div>
+        <select id="unaryOp">
+            <option value="area">Площа</option>
+            <option value="sector">Площа сектора (кут 90)</option>
+            <option value="length">Довжина кола</option>
+            <option value="volume">Об’єм (тільки TSphere)</option>
+        </select>
+        <button onclick="doUnary()">Виконати</button>
+        <div id="unaryResult"></div>
+    </div>
+
+    <div id="editorModal">
+        <div id="editorContent">
+            <h3>Редагування екземпляра</h3>
+            <label>Ім’я: <input type="text" id="editName"></label><br>
+            <label>Радіус: <input type="number" id="editRadius"></label><br>
+            <button onclick="saveEdit()">Зберегти</button>
+            <button onclick="closeEditor()">Скасувати</button>
+        </div>
+    </div>
+
+    <script src="TCircle.js"></script>
+    <script src="TSphere.js"></script>
+    <script>
+        let instanceId = 0;
+        const instances = {};
+        let editingId = null;
+
+        function createInstance() {
+            const type = document.getElementById("classType").value;
+            const radius = parseFloat(document.getElementById("radius").value);
+            const name = document.getElementById("instName").value || type;
+            const obj = type === "circle" ? new TCircle(radius, name) : new TSphere(radius, name);
+            addInstance(obj);
+        }
+
+        function addInstance(obj) {
+            const id = 'inst' + (instanceId++);
+            instances[id] = obj;
+
+            const div = document.createElement('div');
+            div.className = 'draggable';
+            div.draggable = true;
+            div.textContent = obj.toString();
+            div.dataset.id = id;
+            div.addEventListener('dragstart', e => e.dataTransfer.setData('id', id));
+
+            const delBtn = document.createElement('button');
+            delBtn.textContent = "✖";
+            delBtn.onclick = () => { delete instances[id]; wrap.remove(); syncSlots(); };
+
+            const editBtn = document.createElement('button');
+            editBtn.textContent = "✎";
+            editBtn.onclick = () => openEditor(id);
+
+            const wrap = document.createElement('div');
+            wrap.appendChild(div);
+            wrap.appendChild(editBtn);
+            wrap.appendChild(delBtn);
+            document.getElementById('instances').appendChild(wrap);
+        }
+
+        document.querySelectorAll('.dropzone').forEach(zone => {
+            zone.addEventListener('dragover', e => e.preventDefault());
+            zone.addEventListener('drop', e => {
+                e.preventDefault();
+                const id = e.dataTransfer.getData('id');
+                if (!instances[id]) return;
+                zone.textContent = instances[id].toString();
+                zone.dataset.id = id;
+                zone.classList.add('filled');
+                // кнопка очищення
+                const clearBtn = document.createElement("button");
+                clearBtn.textContent = "x";
+                clearBtn.onclick = () => { zone.textContent = "Слот"; zone.removeAttribute("data-id"); zone.classList.remove("filled"); };
+                zone.appendChild(clearBtn);
+            });
+        });
+
+        function syncSlots() {
+            document.querySelectorAll('.dropzone').forEach(zone => {
+                const id = zone.dataset.id;
+                if (id && instances[id]) {
+                    zone.textContent = instances[id].toString();
+                    zone.classList.add('filled');
+                    const clearBtn = document.createElement("button");
+                    clearBtn.textContent = "x";
+                    clearBtn.onclick = () => { zone.textContent = "Слот"; zone.removeAttribute("data-id"); zone.classList.remove("filled"); };
+                    zone.appendChild(clearBtn);
+                } else if (id) {
+                    zone.textContent = "Слот";
+                    zone.removeAttribute("data-id");
+                    zone.classList.remove("filled");
+                }
+            });
+        }
+
+        function doBinary() {
+            const slotA = document.querySelector('[data-slot="a"]').dataset.id;
+            const slotB = document.querySelector('[data-slot="b"]').dataset.id;
+            if (!slotA || !slotB) { alert("Заповніть обидва слоти!"); return; }
+            const a = instances[slotA], b = instances[slotB];
+            if (a instanceof TSphere ^ b instanceof TSphere) { alert("Операція має бути між однаковими типами"); return; }
+            const op = document.getElementById("binaryOp").value;
+            let result;
+            switch (op) {
+                case "add": result = a.add(b); addInstance(result); break;
+                case "sub": result = a.sub(b); addInstance(result); break;
+                case "mul": result = a.mul(b); addInstance(result); break;
+                case "div": result = a.div(b); addInstance(result); break;
+                case "eq": result = a.eq(b); break;
+                case "neq": result = a.neq(b); break;
+                case "gt": result = a.gt(b); break;
+                case "lt": result = a.lt(b); break;
+                case "ge": result = a.ge(b); break;
+                case "le": result = a.le(b); break;
+            }
+            document.getElementById("binaryResult").textContent = "Результат: " + result;
+        }
+
+        function doUnary() {
+            const slot = document.querySelector('[data-slot="u"]').dataset.id;
+            if (!slot) { alert("Заповни слот!"); return; }
+            const obj = instances[slot];
+            const op = document.getElementById("unaryOp").value;
+            let result;
+            switch (op) {
+                case "area": result = obj.getArea(); break;
+                case "sector": result = obj.getSectorArea(90); break;
+                case "length": result = obj.getCircleLength(); break;
+                case "volume": result = obj.getVolume ? obj.getVolume() : "N/A"; break;
+            }
+            document.getElementById("unaryResult").textContent = "Результат: " + result;
+        }
+
+        function openEditor(id) {
+            editingId = id;
+            const obj = instances[id];
+            document.getElementById('editName').value = obj.name;
+            document.getElementById('editRadius').value = obj.getRadius();
+            document.getElementById('editorModal').style.display = 'flex';
+        }
+        function closeEditor() {
+            editingId = null;
+            document.getElementById('editorModal').style.display = 'none';
+        }
+        function saveEdit() {
+            if (!editingId) return;
+            const obj = instances[editingId];
+            obj.name = document.getElementById('editName').value;
+            obj.setRadius((parseFloat(document.getElementById('editRadius').value)) ?? 0);
+
+            const draggable = document.querySelector(`.draggable[data-id="${editingId}"]`);
+            if (draggable) draggable.textContent = obj.toString();
+            syncSlots();
+            closeEditor();
+        }
+    </script>
+</body>
+
+</html>

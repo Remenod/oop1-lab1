@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="uk">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Triangle Playground</title>
+    <link rel="stylesheet" href="../style.css">
+</head>
+
+<body>
+    <h1>Triangle Playground</h1>
+
+    <div class="section">
+        <h2>Конструктор трикутника</h2>
+        <label>Точка A (x, y): <input type="number" id="ax" value="0"> <input type="number" id="ay" value="0"></label>
+        <label>Точка B (x, y): <input type="number" id="bx" value="4"> <input type="number" id="by" value="0"></label>
+        <label>Точка C (x, y): <input type="number" id="cx" value="0"> <input type="number" id="cy" value="3"></label>
+        <button onclick="createTriangle()">Створити трикутник</button>
+    </div>
+
+    <div class="section">
+        <h2>Властивості</h2>
+        <div id="triangleInfo"></div>
+    </div>
+
+
+    <script src="Point.js"></script>
+    <script src="Triangle.js"></script>
+    <script>
+
+
+        // Тестер
+        let triangle = null;
+
+        function createTriangle() {
+            try {
+                const a = new Point(parseFloat(document.getElementById('ax').value),
+                    parseFloat(document.getElementById('ay').value));
+                const b = new Point(parseFloat(document.getElementById('bx').value),
+                    parseFloat(document.getElementById('by').value));
+                const c = new Point(parseFloat(document.getElementById('cx').value),
+                    parseFloat(document.getElementById('cy').value));
+
+                triangle = new Triangle(a, b, c);
+
+                document.getElementById('triangleInfo').innerHTML = `
+            ${triangle.toString()}<br>
+            Сторони: a=${triangle.getSide('a').toFixed(2)}, b=${triangle.getSide('b').toFixed(2)}, c=${triangle.getSide('c').toFixed(2)}<br>
+            Периметр: ${triangle.getPerimeter().toFixed(2)}<br>
+            Площа: ${triangle.getArea().toFixed(2)}
+        `;
+            } catch (err) {
+                alert(err.message);
+            }
+        }
+    </script>
+
+</body>
+
+</html>

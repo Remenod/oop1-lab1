@@ -1,0 +1,199 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f7f9fb;
+    color: #222;
+    padding: 20px;
+    line-height: 1.6;
+    max-width: 900px;
+    margin: auto;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 24px;
+}
+
+.section {
+    background: #fff;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    margin-bottom: 20px;
+}
+
+.section h2 {
+    margin-bottom: 12px;
+}
+
+label {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 12px;
+    font-weight: 500;
+}
+
+input[type="text"],
+input[type="number"],
+select {
+    padding: 8px 10px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+    margin-top: 4px;
+}
+
+button {
+    background-color: #4a90e2;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 8px;
+    padding: 8px 14px;
+    font-size: 14px;
+    transition: background 0.2s ease, transform 0.1s ease;
+}
+
+button:hover {
+    background-color: #357bd8;
+    transform: scale(1.02);
+}
+
+button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+.draggable {
+    display: inline-block;
+    padding: 6px 12px;
+    margin: 5px;
+    background: #e0f7ff;
+    border: 1px solid #88c0d0;
+    border-radius: 8px;
+    cursor: grab;
+    transition: transform 0.2s, background 0.2s;
+}
+
+.draggable:active {
+    cursor: grabbing;
+    transform: scale(1.05);
+    background: #c0e8ff;
+}
+
+.dropzone {
+    width: 160px;
+    height: 50px;
+    border: 2px dashed #bbb;
+    margin: 5px;
+    vertical-align: middle;
+    text-align: center;
+    line-height: 50px;
+    border-radius: 10px;
+    background: #fafafa;
+    position: relative;
+    white-space: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+    transition: border-color 0.3s, background 0.3s;
+    min-width: 160px;
+    width: auto;
+    padding: 0 15px;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: space-between;
+    border: 2px dashed #bbb;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.dropzone.filled {
+    border-color: #4caf50;
+    background: #e8f5e9;
+}
+
+.dropzone button {
+    position: absolute;
+    right: 4px;
+    top: 4px;
+    font-size: 11px;
+    background: #ff6b6b;
+    border: none;
+    color: #fff;
+    border-radius: 4px;
+    padding: 2px 6px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.dropzone button:hover {
+    background: #ff3b3b;
+}
+
+#instances>div {
+    margin-bottom: 6px;
+    padding: 6px 10px;
+    background: #f0f4f8;
+    border-radius: 6px;
+}
+
+#editorModal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+#editorContent {
+    background: #fff;
+    padding: 25px 30px;
+    border-radius: 12px;
+    min-width: 280px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+#editorContent input[type="text"],
+#editorContent input[type="number"] {
+    width: 100%;
+    padding: 8px 10px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+}
+
+#binaryResult,
+#unaryResult {
+    margin-top: 10px;
+    padding: 8px 12px;
+    background: #f4f6f8;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    min-height: 24px;
+}
+
+@media (max-width: 600px) {
+    .dropzone {
+        width: 100%;
+        line-height: 40px;
+    }
+
+    .section {
+        padding: 15px;
+    }
+
+    button {
+        width: 100%;
+        text-align: center;
+    }
+}

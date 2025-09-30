@@ -1,4 +1,0 @@
-docs/** linguist-vendored=false
-docs/**/*.js   linguist-language=JavaScript
-docs/**/*.html linguist-language=HTML
-docs/**/*.css  linguist-language=CSS
